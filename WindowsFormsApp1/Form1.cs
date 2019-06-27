@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Text;
+using System;
+using System.Reflection;
 
 namespace WindowsFormsApp1
 {
@@ -42,18 +44,44 @@ namespace WindowsFormsApp1
         {
 
         }
+        private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
 
         private void Button2_Click(object sender, EventArgs e)
         {
             
-            String fileName = Path.GetFileName(textBox1.Text);
+            String fileName = Path.GetFileName(textBox1.Text); // gets the filename 
             String[] fileNameTokens = fileName.Split('.');
-            textBox1.Text = fileNameTokens[1];  
+            
+            String[] types = new String[1000];
+            int i = 0;
 
-            if (fileNameTokens[1] != ".exe" || fileNameTokens[1] != ".dll")
+
+            if ((string.Compare(fileNameTokens[1], "exe") == 0) || (string.Compare(fileNameTokens[1], "dll") == 0))
+            { 
+                var DLL = Assembly.LoadFile(@"C:\Users\bytes\source\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Math.dll");
+                foreach (Type type in DLL.GetExportedTypes())
+                {
+                    var c = Activator.CreateInstance(type);
+                    types[++i] = type.ToString();
+                }
+
+                TreeNode mainNode = new TreeNode();
+                mainNode.Name = "mainNode";
+                mainNode.Text = types[1];
+                this.treeView1.Nodes.Add(mainNode);
+            }
+            else
             {
                 System.Windows.Forms.MessageBox.Show("Not a .exe or .dll file!");
+                textBox1.Text = "";
+                return;
             }
         }
+
+
     }
 }
