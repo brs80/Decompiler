@@ -8,8 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System.Text;
-using System;
 using System.Reflection;
 
 namespace WindowsFormsApp1
@@ -57,6 +55,8 @@ namespace WindowsFormsApp1
             String[] fileNameTokens = fileName.Split('.');
             
             String[] types = new String[1000];
+            TreeNode mainNode = new TreeNode();
+            mainNode.Name = "mainNode";
             int i = 0;
 
 
@@ -66,12 +66,22 @@ namespace WindowsFormsApp1
                 foreach (Type type in DLL.GetExportedTypes())
                 {
                     var c = Activator.CreateInstance(type);
-                    types[++i] = type.ToString();
+                    types[i] = type.ToString();
+                    
+
+                    if(i == 1)
+                    {
+                        mainNode.Text = types[1];
+                    } else
+                    {
+                        TreeNode childNode = new TreeNode();
+                        childNode.Text = types[i];
+                        this.treeView1.Nodes.Add(childNode);
+                    }
+                    i++;
                 }
 
-                TreeNode mainNode = new TreeNode();
-                mainNode.Name = "mainNode";
-                mainNode.Text = types[1];
+
                 this.treeView1.Nodes.Add(mainNode);
             }
             else
